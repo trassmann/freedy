@@ -20,14 +20,6 @@
     "fs:scope-document-recursive",
     "fs:scope-desktop-recursive",
     "fs:scope-temp-recursive",
-    "store:default",
-    {
-      "identifier": "fs:scope",
-      "allow": [
-        { "path": "/Users/**" },
-        { "path": "/Volumes/**" },
-        { "path": "/tmp/**" }
-      ]
-    }
+    "store:default"
   ]
 }
