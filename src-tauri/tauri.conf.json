@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/nicehash/tauri/dev/core/tauri-config-schema/schema.json",
+  "productName": "Freedy",
+  "version": "0.1.0",
+  "identifier": "com.freedy.rsvp",
+  "build": {
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420",
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Freedy",
+        "width": 1000,
+        "height": 700,
+        "minWidth": 700,
+        "minHeight": 500
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self' blob: data:; script-src 'self' blob: 'unsafe-eval'; style-src 'self' 'unsafe-inline' data:; img-src 'self' blob: data: asset: https://asset.localhost; worker-src 'self' blob:; connect-src 'self' blob: data: ipc: http://ipc.localhost"
+    }
+  }
+}
