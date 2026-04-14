@@ -26,7 +26,7 @@ export function ReaderControls({ engine }: ReaderControlsProps) {
   const minutesLeft = remainingWords / settings.wpm;
 
   return (
-    <div className="flex flex-col gap-3 px-6 py-4 bg-surface-dim border-t border-border">
+    <div className="flex flex-col gap-5 px-6 py-5 bg-surface-dim border-t border-border">
       {/* Playback controls */}
       <div className="flex items-center justify-center gap-4">
         <button
@@ -75,25 +75,27 @@ export function ReaderControls({ engine }: ReaderControlsProps) {
         </button>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full">
-        <div className="flex justify-between text-xs text-on-surface-muted mb-1">
-          <span>
-            {engine.currentChunkIndex + 1} / {engine.totalChunks}
-          </span>
-          <span>{formatTime(minutesLeft)}</span>
-          <span>{engine.progress.toFixed(1)}%</span>
+      {/* Progress + settings wrapper — inline-flex so width is driven by settings row content */}
+      <div className="self-center inline-flex flex-col gap-5 w-full min-[800px]:min-w-[75%] min-[800px]:w-auto">
+        {/* Progress bar */}
+        <div className="w-full">
+          <div className="grid grid-cols-3 text-xs text-on-surface-muted mb-1">
+            <span className="text-left">
+              {engine.currentChunkIndex + 1} / {engine.totalChunks}
+            </span>
+            <span className="text-center">{formatTime(minutesLeft)}</span>
+            <span className="text-right">{engine.progress.toFixed(1)}%</span>
+          </div>
+          <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
+            <div
+              className="h-full bg-accent rounded-full transition-all duration-150"
+              style={{ width: `${engine.progress}%` }}
+            />
+          </div>
         </div>
-        <div className="w-full h-1.5 bg-border rounded-full overflow-hidden">
-          <div
-            className="h-full bg-accent rounded-full transition-all duration-150"
-            style={{ width: `${engine.progress}%` }}
-          />
-        </div>
-      </div>
 
-      {/* Settings row */}
-      <div className="flex items-center justify-center gap-6 text-sm">
+        {/* Settings row */}
+        <div className="flex items-center justify-between text-sm">
         {/* WPM control */}
         <div className="flex items-center gap-2">
           <button
@@ -159,6 +161,7 @@ export function ReaderControls({ engine }: ReaderControlsProps) {
           >
             A+
           </button>
+        </div>
         </div>
       </div>
     </div>
