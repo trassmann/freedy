@@ -4,9 +4,7 @@
 
 Freedy is a free, open-source desktop speed reader that uses RSVP (Rapid Serial Visual Presentation) to help you blast through books, articles, and documents. Drop in an EPUB, PDF, or text file and start reading at up to 1500 words per minute.
 
-[![Latest Release](https://img.shields.io/github/v/release/trassmann/freedy)](https://github.com/trassmann/freedy/releases/latest)
-
-Download the latest release for macOS or Windows.
+[Download the latest release for macOS or Windows HERE](https://github.com/trassmann/freedy/releases/latest)
 
 ![Freedy screenshot](screenshot.png)
 
