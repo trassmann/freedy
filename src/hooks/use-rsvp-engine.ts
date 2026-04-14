@@ -1,16 +1,12 @@
 import { useCallback, useEffect, useRef } from "react";
-import { useAppStore } from "../stores/app-store";
 import { chunkTokens, type Token } from "../lib/tokenizer";
+import { useAppStore } from "../stores/app-store";
 
 const SENTENCE_ENDERS = /[.!?]$/;
 const CLAUSE_PAUSE = /[,;:]$/;
 
 /** Compute pause multiplier at runtime using current settings */
-function getPauseForChunk(
-  chunk: Token[],
-  sentencePause: number,
-  commaPause: number,
-): number {
+function getPauseForChunk(chunk: Token[], sentencePause: number, commaPause: number): number {
   let maxPause = 1.0;
   for (const t of chunk) {
     const word = t.text;
@@ -60,9 +56,7 @@ export function useRsvpEngine() {
   }
 
   const currentChunk = chunks[currentChunkIndex];
-  const currentText = currentChunk
-    ? currentChunk.map((t) => t.text).join(" ")
-    : "";
+  const currentText = currentChunk ? currentChunk.map((t) => t.text).join(" ") : "";
 
   // Compute pause from current settings (so slider changes apply immediately)
   const pauseMultiplier = currentChunk
@@ -72,8 +66,7 @@ export function useRsvpEngine() {
   const baseInterval = 60000 / settings.wpm;
 
   const totalChunks = chunks.length;
-  const progress =
-    totalChunks > 0 ? ((currentChunkIndex + 1) / totalChunks) * 100 : 0;
+  const progress = totalChunks > 0 ? ((currentChunkIndex + 1) / totalChunks) * 100 : 0;
 
   const stop = useCallback(() => {
     if (timerRef.current) {
@@ -122,8 +115,7 @@ export function useRsvpEngine() {
     const displayPause = displayedChunk
       ? getPauseForChunk(displayedChunk, state.settings.sentencePause, state.settings.commaPause)
       : 1;
-    const interval =
-      (60000 / state.settings.wpm) * displayPause * state.settings.chunkSize;
+    const interval = (60000 / state.settings.wpm) * displayPause * state.settings.chunkSize;
 
     const drift = Date.now() - expectedRef.current;
     expectedRef.current += interval;
@@ -147,7 +139,7 @@ export function useRsvpEngine() {
 
   const skipForward = useCallback(
     (amount: number = 1) => {
-      let ci = currentChunkIndex;
+      const ci = currentChunkIndex;
       const targetChunk = Math.min(ci + amount, chunks.length - 1);
       let newIndex = 0;
       for (let i = 0; i < targetChunk; i++) {
@@ -160,7 +152,7 @@ export function useRsvpEngine() {
 
   const skipBackward = useCallback(
     (amount: number = 1) => {
-      let ci = currentChunkIndex;
+      const ci = currentChunkIndex;
       const targetChunk = Math.max(ci - amount, 0);
       let newIndex = 0;
       for (let i = 0; i < targetChunk; i++) {
@@ -173,10 +165,7 @@ export function useRsvpEngine() {
 
   const adjustWpm = useCallback(
     (delta: number) => {
-      const newWpm = Math.min(
-        1500,
-        Math.max(100, settings.wpm + delta),
-      );
+      const newWpm = Math.min(1500, Math.max(100, settings.wpm + delta));
       useAppStore.getState().updateSettings({ wpm: newWpm });
     },
     [settings.wpm],

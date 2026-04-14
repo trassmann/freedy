@@ -48,9 +48,7 @@ export function WordDisplay({ text }: WordDisplayProps) {
         className="flex items-center justify-center h-full select-none"
         style={{ fontFamily, fontSize: `${fontSize}px` }}
       >
-        <span className="text-on-surface-muted opacity-40">
-          Press Space to start
-        </span>
+        <span className="text-on-surface-muted opacity-40">Press Space to start</span>
       </div>
     );
   }
@@ -71,10 +69,7 @@ export function WordDisplay({ text }: WordDisplayProps) {
       {/* Center guide line */}
       <div className="absolute top-0 bottom-0 left-1/2 w-px bg-accent/20" />
 
-      <div
-        className="flex items-center"
-        style={{ fontFamily, fontSize: `${fontSize}px` }}
-      >
+      <div className="flex items-center" style={{ fontFamily, fontSize: `${fontSize}px` }}>
         <span className="text-on-surface text-right" style={{ minWidth: "2.5em" }}>
           {parts.before}
         </span>

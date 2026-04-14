@@ -1,8 +1,9 @@
-import { useRsvpEngine } from "../hooks/use-rsvp-engine";
+import { ArrowLeft } from "lucide-react";
 import { useKeyboard } from "../hooks/use-keyboard";
+import { useRsvpEngine } from "../hooks/use-rsvp-engine";
 import { useAppStore } from "../stores/app-store";
-import { WordDisplay } from "./WordDisplay";
 import { ReaderControls } from "./ReaderControls";
+import { WordDisplay } from "./WordDisplay";
 
 export function Reader() {
   const engine = useRsvpEngine();
@@ -29,12 +30,11 @@ export function Reader() {
       {/* Top bar */}
       <div className="flex items-center justify-between px-4 py-2 bg-surface-dim border-b border-border">
         <button
+          type="button"
           onClick={handleBack}
           className="flex items-center gap-1.5 text-sm text-on-surface-muted hover:text-on-surface transition-colors"
         >
-          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
-          </svg>
+          <ArrowLeft className="w-4 h-4" />
           Library
         </button>
         <span className="text-sm font-medium text-on-surface truncate max-w-[60%]">
