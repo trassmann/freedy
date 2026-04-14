@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { useAppStore } from "../stores/app-store";
 
-let storeInstance: Awaited<ReturnType<typeof import("@tauri-apps/plugin-store")["load"]>> | null = null;
+let storeInstance: Awaited<ReturnType<typeof import("@tauri-apps/plugin-store")["load"]>> | null =
+  null;
 
 async function getStore() {
   if (storeInstance) return storeInstance;
@@ -13,8 +14,10 @@ async function getStore() {
 export function usePersistence() {
   const library = useAppStore((s) => s.library);
   const settings = useAppStore((s) => s.settings);
+  const removedProgress = useAppStore((s) => s.removedProgress);
   const setLibrary = useAppStore((s) => s.setLibrary);
   const updateSettings = useAppStore((s) => s.updateSettings);
+  const setRemovedProgress = useAppStore((s) => s.setRemovedProgress);
   const loadedRef = useRef(false);
 
   // Load on mount
@@ -24,6 +27,7 @@ export function usePersistence() {
         const store = await getStore();
         const savedLibrary = await store.get("library");
         const savedSettings = await store.get("settings");
+        const savedRemovedProgress = await store.get("removedProgress");
 
         if (Array.isArray(savedLibrary)) {
           setLibrary(savedLibrary);
@@ -31,15 +35,20 @@ export function usePersistence() {
         if (savedSettings && typeof savedSettings === "object") {
           updateSettings(savedSettings as Record<string, unknown>);
         }
+        if (savedRemovedProgress && typeof savedRemovedProgress === "object") {
+          setRemovedProgress(
+            savedRemovedProgress as Record<string, { wordIndex: number; totalWords: number }>,
+          );
+        }
       } catch (e) {
         console.warn("Failed to load persisted state:", e);
       }
       loadedRef.current = true;
     }
     loadState();
-  }, [setLibrary, updateSettings]);
+  }, [setLibrary, updateSettings, setRemovedProgress]);
 
-  // Save when library or settings change (debounced)
+  // Save when library, settings, or removedProgress change (debounced)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -54,6 +63,7 @@ export function usePersistence() {
         const store = await getStore();
         await store.set("library", library);
         await store.set("settings", settings);
+        await store.set("removedProgress", removedProgress);
         await store.save();
       } catch (e) {
         console.warn("Failed to save state:", e);
@@ -65,5 +75,5 @@ export function usePersistence() {
         clearTimeout(saveTimerRef.current);
       }
     };
-  }, [library, settings]);
+  }, [library, settings, removedProgress]);
 }

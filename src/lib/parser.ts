@@ -1,5 +1,5 @@
-import type { Chapter } from "./types";
 import JSZip from "jszip";
+import type { Chapter } from "./types";
 
 /**
  * Parse a file into chapters of text.
@@ -133,7 +133,8 @@ function parseOpf(opfContent: string): {
   const spineOrder: string[] = [];
 
   // Parse manifest items
-  const itemRegex = /<item\s[^>]*?id="([^"]+)"[^>]*?href="([^"]+)"[^>]*?media-type="([^"]+)"[^>]*?\/?>/g;
+  const itemRegex =
+    /<item\s[^>]*?id="([^"]+)"[^>]*?href="([^"]+)"[^>]*?media-type="([^"]+)"[^>]*?\/?>/g;
   let match;
   while ((match = itemRegex.exec(opfContent)) !== null) {
     const id = match[1]!;
@@ -143,7 +144,8 @@ function parseOpf(opfContent: string): {
   }
 
   // Also try items where attributes are in different order
-  const itemRegex2 = /<item\s[^>]*?href="([^"]+)"[^>]*?id="([^"]+)"[^>]*?media-type="([^"]+)"[^>]*?\/?>/g;
+  const itemRegex2 =
+    /<item\s[^>]*?href="([^"]+)"[^>]*?id="([^"]+)"[^>]*?media-type="([^"]+)"[^>]*?\/?>/g;
   while ((match = itemRegex2.exec(opfContent)) !== null) {
     const href = decodeURIComponent(match[1]!);
     const id = match[2]!;

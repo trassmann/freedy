@@ -14,9 +14,27 @@ const LONG_WORD_THRESHOLD = 8;
 /** Words above this length get split into multiple ticks with hyphens */
 const SPLIT_THRESHOLD = 13;
 const ABBREVIATIONS = new Set([
-  "mr.", "mrs.", "ms.", "dr.", "prof.", "sr.", "jr.", "st.",
-  "inc.", "ltd.", "co.", "corp.", "vs.", "etc.", "e.g.", "i.e.",
-  "a.m.", "p.m.", "u.s.", "u.k.", "u.s.a.",
+  "mr.",
+  "mrs.",
+  "ms.",
+  "dr.",
+  "prof.",
+  "sr.",
+  "jr.",
+  "st.",
+  "inc.",
+  "ltd.",
+  "co.",
+  "corp.",
+  "vs.",
+  "etc.",
+  "e.g.",
+  "i.e.",
+  "a.m.",
+  "p.m.",
+  "u.s.",
+  "u.k.",
+  "u.s.a.",
 ]);
 
 function isAbbreviation(word: string): boolean {
@@ -24,14 +42,10 @@ function isAbbreviation(word: string): boolean {
 }
 
 function isCurrencyOrNumber(word: string): boolean {
-  return /^[\$\€\£]?\d[\d,.]*%?$/.test(word);
+  return /^[$€£]?\d[\d,.]*%?$/.test(word);
 }
 
-function computePauseMultiplier(
-  word: string,
-  sentencePause: number,
-  commaPause: number,
-): number {
+function computePauseMultiplier(word: string, sentencePause: number, commaPause: number): number {
   if (isCurrencyOrNumber(word)) return 1.0;
   if (isAbbreviation(word)) return 1.0;
 

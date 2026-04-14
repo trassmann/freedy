@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useAppStore } from "./stores/app-store";
-import { usePersistence } from "./hooks/use-persistence";
 import { Library } from "./components/Library";
 import { Reader } from "./components/Reader";
+import { usePersistence } from "./hooks/use-persistence";
+import { useAppStore } from "./stores/app-store";
 
 export default function App() {
   const view = useAppStore((s) => s.view);

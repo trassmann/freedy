@@ -1,6 +1,6 @@
 import { create } from "zustand";
-import type { AppView, BookEntry, ReaderSettings } from "../lib/types";
 import type { Token } from "../lib/tokenizer";
+import type { AppView, BookEntry, ReaderSettings } from "../lib/types";
 
 interface AppState {
   // Navigation
@@ -13,6 +13,10 @@ interface AppState {
   addBook: (book: BookEntry) => void;
   removeBook: (id: string) => void;
   updateBookProgress: (id: string, wordIndex: number) => void;
+
+  // Removed book progress (keyed by filePath, survives removal)
+  removedProgress: Record<string, { wordIndex: number; totalWords: number }>;
+  setRemovedProgress: (progress: Record<string, { wordIndex: number; totalWords: number }>) => void;
 
   // Reader
   activeBookId: string | null;
@@ -49,15 +53,48 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   library: [],
   setLibrary: (library) => set({ library }),
-  addBook: (book) => set((s) => ({ library: [...s.library, book] })),
-  removeBook: (id) =>
-    set((s) => ({ library: s.library.filter((b) => b.id !== id) })),
+  addBook: (book) => {
+    // Check if we have saved progress for this file path
+    const { removedProgress } = get();
+    const saved = removedProgress[book.filePath];
+    if (saved && book.wordIndex === 0) {
+      // Restore progress and clean up
+      const { [book.filePath]: _, ...rest } = removedProgress;
+      set((s) => ({
+        library: [
+          ...s.library,
+          { ...book, wordIndex: saved.wordIndex, totalWords: saved.totalWords },
+        ],
+        removedProgress: rest,
+      }));
+    } else {
+      set((s) => ({ library: [...s.library, book] }));
+    }
+  },
+  removeBook: (id) => {
+    const book = get().library.find((b) => b.id === id);
+    if (book && book.wordIndex > 0) {
+      // Save progress before removing
+      set((s) => ({
+        library: s.library.filter((b) => b.id !== id),
+        removedProgress: {
+          ...s.removedProgress,
+          [book.filePath]: { wordIndex: book.wordIndex, totalWords: book.totalWords },
+        },
+      }));
+    } else {
+      set((s) => ({ library: s.library.filter((b) => b.id !== id) }));
+    }
+  },
   updateBookProgress: (id, wordIndex) =>
     set((s) => ({
       library: s.library.map((b) =>
         b.id === id ? { ...b, wordIndex, lastReadAt: Date.now() } : b,
       ),
     })),
+
+  removedProgress: {},
+  setRemovedProgress: (progress) => set({ removedProgress: progress }),
 
   activeBookId: null,
   tokens: [],
@@ -78,11 +115,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   setIsPlaying: (playing) => set({ isPlaying: playing }),
 
   settings: DEFAULT_SETTINGS,
-  updateSettings: (partial) =>
-    set((s) => ({ settings: { ...s.settings, ...partial } })),
+  updateSettings: (partial) => set((s) => ({ settings: { ...s.settings, ...partial } })),
 
   isLoading: false,
   loadingMessage: "",
-  setLoading: (loading, message = "") =>
-    set({ isLoading: loading, loadingMessage: message }),
+  setLoading: (loading, message = "") => set({ isLoading: loading, loadingMessage: message }),
 }));
