@@ -96,72 +96,72 @@ export function ReaderControls({ engine }: ReaderControlsProps) {
 
         {/* Settings row */}
         <div className="flex items-center justify-between text-sm">
-        {/* WPM control */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => engine.adjustWpm(-25)}
-            className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
-          >
-            -
-          </button>
-          <span className="font-mono text-on-surface min-w-[4.5em] text-center">
-            {settings.wpm} WPM
-          </span>
-          <button
-            type="button"
-            onClick={() => engine.adjustWpm(25)}
-            className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
-          >
-            +
-          </button>
-        </div>
-
-        {/* Words at once */}
-        <div className="flex items-center gap-2">
-          <span className="text-on-surface-muted text-xs">Words at once:</span>
-          {[1, 2, 3, 4, 5].map((size) => (
+          {/* WPM control */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
-              key={size}
-              onClick={() => updateSettings({ chunkSize: size })}
-              className={`w-7 h-7 rounded text-xs font-medium transition-colors ${
-                settings.chunkSize === size
-                  ? "bg-accent text-white"
-                  : "bg-border/50 text-on-surface-muted hover:bg-border"
-              }`}
+              onClick={() => engine.adjustWpm(-25)}
+              className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
             >
-              {size}
+              -
             </button>
-          ))}
-        </div>
+            <span className="font-mono text-on-surface min-w-[4.5em] text-center">
+              {settings.wpm} WPM
+            </span>
+            <button
+              type="button"
+              onClick={() => engine.adjustWpm(25)}
+              className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
+            >
+              +
+            </button>
+          </div>
 
-        {/* Font size */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() =>
-              updateSettings({
-                fontSize: Math.max(24, settings.fontSize - 4),
-              })
-            }
-            className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
-          >
-            A-
-          </button>
-          <span className="text-on-surface-muted text-xs">{settings.fontSize}px</span>
-          <button
-            type="button"
-            onClick={() =>
-              updateSettings({
-                fontSize: Math.min(96, settings.fontSize + 4),
-              })
-            }
-            className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
-          >
-            A+
-          </button>
-        </div>
+          {/* Words at once */}
+          <div className="flex items-center gap-2">
+            <span className="text-on-surface-muted text-xs">Words at once:</span>
+            {[1, 2, 3, 4, 5].map((size) => (
+              <button
+                type="button"
+                key={size}
+                onClick={() => updateSettings({ chunkSize: size })}
+                className={`w-7 h-7 rounded text-xs font-medium transition-colors ${
+                  settings.chunkSize === size
+                    ? "bg-accent text-white"
+                    : "bg-border/50 text-on-surface-muted hover:bg-border"
+                }`}
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+
+          {/* Font size */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() =>
+                updateSettings({
+                  fontSize: Math.max(24, settings.fontSize - 4),
+                })
+              }
+              className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
+            >
+              A-
+            </button>
+            <span className="text-on-surface-muted text-xs">{settings.fontSize}px</span>
+            <button
+              type="button"
+              onClick={() =>
+                updateSettings({
+                  fontSize: Math.min(96, settings.fontSize + 4),
+                })
+              }
+              className="px-2 py-0.5 rounded bg-border/50 hover:bg-border text-on-surface-muted text-xs"
+            >
+              A+
+            </button>
+          </div>
         </div>
       </div>
     </div>
