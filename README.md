@@ -1,4 +1,4 @@
-# Freedy
+# fReedy
 
 **Read faster. Read more. Open source.**
 
