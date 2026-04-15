@@ -1,16 +1,16 @@
 # fReedy
 
-**Read faster. Read more. Open source.**
+fReedy is a free, open-source desktop speed reader that uses RSVP (Rapid Serial Visual Presentation). Works with EPUB, PDF, or text files. Supports reading at up to 1500 words per minute.
 
-Freedy is a free, open-source desktop speed reader that uses RSVP (Rapid Serial Visual Presentation) to help you blast through books, articles, and documents. Drop in an EPUB, PDF, or text file and start reading at up to 1500 words per minute.
+![fReedy screenshot](screenshot.png)
+
+## Download
 
 [Download the latest release for macOS or Windows HERE](https://github.com/trassmann/freedy/releases/latest)
 
-![Freedy screenshot](screenshot.png)
+## Why fReedy?
 
-## Why Freedy?
-
-Most speed reading apps are either web-only, subscription-based, or abandonware. Freedy is a native desktop app that runs on macOS and Windows, works offline, and is completely free. Your books stay on your machine.
+I wasn't satisfied with the existing RSVP reader solutions. They are either browser extensions or web apps, have horrible UIs, or aren't free. fReedy is a simple desktop app that runs completely offline, has a decent UI and is free and open source.
 
 ## Features
 
@@ -24,7 +24,17 @@ Most speed reading apps are either web-only, subscription-based, or abandonware.
 - **Dark mode** - system, light, or dark
 - **Keyboard-driven** - full keyboard shortcut support
 
-## Getting Started
+## Keyboard Shortcuts
+
+| Key | Action |
+|---|---|
+| Space | Play / Pause |
+| Left / Right | Skip 1 word |
+| Shift+Left / Right | Skip 10 words |
+| Up / Down | Adjust WPM |
+| Escape | Back to library |
+
+## Development
 
 You'll need [Rust](https://rustup.rs/), [Node.js](https://nodejs.org/) (v20+), and [pnpm](https://pnpm.io/) (v10+).
 
@@ -38,20 +48,6 @@ To build for production:
 ```bash
 pnpm tauri build
 ```
-
-## Keyboard Shortcuts
-
-| Key | Action |
-|---|---|
-| Space | Play / Pause |
-| Left / Right | Skip 1 word |
-| Shift+Left / Right | Skip 10 words |
-| Up / Down | Adjust WPM |
-| Escape | Back to library |
-
-## Built With
-
-Tauri v2, React 19, TypeScript, Tailwind CSS v4, Zustand, Vite, lucide-react, Biome
 
 ## License
 
