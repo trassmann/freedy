@@ -57,10 +57,27 @@ jobs:
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Ad-hoc sign macOS builds. Without this, unsigned arm64 binaries
+          # are killed by the kernel on Apple Silicon ("damaged and can't be
+          # opened"). Ad-hoc signing is free (no Apple Developer account
+          # required) and the user still has to strip the quarantine flag
+          # the first time, but the app at least launches.
+          APPLE_SIGNING_IDENTITY: ${{ matrix.platform == 'macos-latest' && '-' || '' }}
         with:
           tagName: ${{ github.ref_name }}
           releaseName: 'Freedy ${{ github.ref_name }}'
-          releaseBody: 'Download the installer for your platform below.'
+          releaseBody: |
+            Download the installer for your platform below.
+
+            **macOS:**
+            - Apple Silicon (M1/M2/M3/M4): `Freedy_*_aarch64.dmg`
+            - Intel: `Freedy_*_x64.dmg`
+
+            On first launch macOS will say the app is damaged because it isn't notarized. Run this once to dismiss the warning:
+
+            ```bash
+            xattr -dr com.apple.quarantine /Applications/Freedy.app
+            ```
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: false
