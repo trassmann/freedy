@@ -19,10 +19,28 @@ jobs:
             args: --target x86_64-apple-darwin
           - platform: windows-latest
             args: ''
+          # Pinned to 22.04 for a lower glibc baseline so the AppImage /
+          # .deb runs on a wider range of distros.
+          - platform: ubuntu-22.04
+            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Install Linux build dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            patchelf \
+            build-essential \
+            file \
+            wget
 
       - uses: pnpm/action-setup@v5
 
@@ -78,6 +96,10 @@ jobs:
             ```bash
             xattr -dr com.apple.quarantine /Applications/Freedy.app
             ```
+
+            **Windows:** `Freedy_*_x64-setup.exe` or `Freedy_*_x64_en-US.msi`.
+
+            **Linux:** `Freedy_*_amd64.AppImage` (portable), `Freedy_*_amd64.deb` (Debian/Ubuntu), or `Freedy-*-1.x86_64.rpm` (Fedora/RHEL). The AppImage needs `chmod +x` before running.
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: false

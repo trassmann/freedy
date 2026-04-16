@@ -6,7 +6,7 @@ fReedy is a free, open-source desktop speed reader that uses RSVP (Rapid Serial 
 
 ## Download
 
-[Download the latest release for macOS or Windows HERE](https://github.com/trassmann/freedy/releases/latest)
+[Download the latest release for macOS, Windows, or Linux HERE](https://github.com/trassmann/freedy/releases/latest)
 
 ### macOS: first launch
 
@@ -20,6 +20,12 @@ Pick the right installer for your Mac:
 
 - **Apple Silicon (M1/M2/M3/M4):** `Freedy_x.y.z_aarch64.dmg`
 - **Intel:** `Freedy_x.y.z_x64.dmg`
+
+### Linux
+
+- **Debian / Ubuntu:** `Freedy_x.y.z_amd64.deb` — `sudo apt install ./Freedy_*_amd64.deb`
+- **Fedora / RHEL:** `Freedy-x.y.z-1.x86_64.rpm` — `sudo dnf install ./Freedy-*.rpm`
+- **Any distro (portable):** `Freedy_x.y.z_amd64.AppImage` — `chmod +x Freedy_*.AppImage && ./Freedy_*.AppImage`
 
 ## Why fReedy?
 
