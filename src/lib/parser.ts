@@ -183,13 +183,15 @@ function stripHtml(html: string): string {
 }
 
 async function parsePdf(buffer: ArrayBuffer): Promise<Chapter[]> {
-  const pdfjsLib = await import("pdfjs-dist");
+  // Tauri's WKWebView doesn't implement async iteration on ReadableStream,
+  // which pdf.js uses internally (`for await (const v of stream)`), causing
+  // "undefined is not a function (near '...value of readableStream...')".
+  // Polyfill it before loading pdf.js.
+  polyfillReadableStreamAsyncIterator();
 
-  // Set up the worker
-  pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-    "pdfjs-dist/build/pdf.worker.mjs",
-    import.meta.url,
-  ).href;
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+  const workerUrl = (await import("pdfjs-dist/legacy/build/pdf.worker.mjs?url")).default;
+  pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
 
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const pages: string[] = [];
@@ -214,6 +216,34 @@ async function parsePdf(buffer: ArrayBuffer): Promise<Chapter[]> {
 
   // Combine all pages into a single chapter (PDFs don't have chapter metadata)
   return [{ title: "Full Document", text: pages.join("\n\n") }];
+}
+
+let readableStreamPolyfilled = false;
+function polyfillReadableStreamAsyncIterator(): void {
+  if (readableStreamPolyfilled) return;
+  readableStreamPolyfilled = true;
+  if (typeof ReadableStream === "undefined") return;
+  const proto = ReadableStream.prototype as ReadableStream<unknown> & {
+    [Symbol.asyncIterator]?: () => AsyncIterator<unknown>;
+    values?: () => AsyncIterator<unknown>;
+  };
+  if (proto[Symbol.asyncIterator]) return;
+
+  async function* iterate(this: ReadableStream<unknown>) {
+    const reader = this.getReader();
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) return;
+        yield value;
+      }
+    } finally {
+      reader.releaseLock();
+    }
+  }
+
+  proto[Symbol.asyncIterator] = iterate;
+  proto.values = iterate;
 }
 
 function parseTxt(bytes: Uint8Array): Chapter[] {
