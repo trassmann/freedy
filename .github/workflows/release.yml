@@ -19,10 +19,28 @@ jobs:
             args: --target x86_64-apple-darwin
           - platform: windows-latest
             args: ''
+          # Pinned to 22.04 for a lower glibc baseline so the AppImage /
+          # .deb runs on a wider range of distros.
+          - platform: ubuntu-22.04
+            args: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
       - uses: actions/checkout@v6
+
+      - name: Install Linux build dependencies
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            libssl-dev \
+            patchelf \
+            build-essential \
+            file \
+            wget
 
       - uses: pnpm/action-setup@v5
 
@@ -65,19 +83,23 @@ jobs:
           APPLE_SIGNING_IDENTITY: ${{ matrix.platform == 'macos-latest' && '-' || '' }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: 'Freedy ${{ github.ref_name }}'
+          releaseName: 'fReedy ${{ github.ref_name }}'
           releaseBody: |
             Download the installer for your platform below.
 
             **macOS:**
-            - Apple Silicon (M1/M2/M3/M4): `Freedy_*_aarch64.dmg`
-            - Intel: `Freedy_*_x64.dmg`
+            - Apple Silicon (M1/M2/M3/M4): `fReedy_*_aarch64.dmg`
+            - Intel: `fReedy_*_x64.dmg`
 
             On first launch macOS will say the app is damaged because it isn't notarized. Run this once to dismiss the warning:
 
             ```bash
-            xattr -dr com.apple.quarantine /Applications/Freedy.app
+            xattr -dr com.apple.quarantine /Applications/fReedy.app
             ```
+
+            **Windows:** `fReedy_*_x64-setup.exe` or `fReedy_*_x64_en-US.msi`.
+
+            **Linux:** `fReedy_*_amd64.AppImage` (portable), `fReedy_*_amd64.deb` (Debian/Ubuntu), or `fReedy-*-1.x86_64.rpm` (Fedora/RHEL). The AppImage needs `chmod +x` before running.
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: false

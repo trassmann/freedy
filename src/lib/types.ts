@@ -1,12 +1,17 @@
+export type BookFormat = "epub" | "pdf" | "txt" | "paste";
+
 export interface BookEntry {
   id: string;
   title: string;
+  /** Absolute path on disk, or empty string for pasted entries. */
   filePath: string;
-  format: "epub" | "pdf" | "txt";
+  format: BookFormat;
   addedAt: number;
   wordIndex: number;
   totalWords: number;
   lastReadAt: number | null;
+  /** For `format === "paste"`: the raw text the user pasted in. */
+  pastedText?: string;
 }
 
 export interface ReaderSettings {

@@ -1,4 +1,4 @@
-import { BookOpen, Plus, Settings, Trash2 } from "lucide-react";
+import { BookOpen, ClipboardPaste, FileUp, Settings, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 import { detectFormat, parseFile } from "../lib/parser";
 import { tokenize } from "../lib/tokenizer";
@@ -17,6 +17,9 @@ export function Library() {
   const updateSettings = useAppStore((s) => s.updateSettings);
   const [showSettings, setShowSettings] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
+  const [showPaste, setShowPaste] = useState(false);
+  const [pasteTitle, setPasteTitle] = useState("");
+  const [pasteText, setPasteText] = useState("");
 
   const handleImport = useCallback(async () => {
     try {
@@ -72,9 +75,14 @@ export function Library() {
     async (book: BookEntry) => {
       try {
         setLoading(true, "Loading book...");
-        const chapters = await parseFile(book.filePath, book.format);
-        const fullText = chapters.map((c) => c.text).join("\n\n");
-        const tokens = tokenize(fullText);
+        let tokens;
+        if (book.format === "paste") {
+          tokens = tokenize(book.pastedText ?? "");
+        } else {
+          const chapters = await parseFile(book.filePath, book.format);
+          const fullText = chapters.map((c) => c.text).join("\n\n");
+          tokens = tokenize(fullText);
+        }
         setActiveBook(book.id, tokens);
         setLoading(false);
       } catch (err) {
@@ -87,6 +95,44 @@ export function Library() {
     },
     [setActiveBook, setLoading],
   );
+
+  const handlePasteSubmit = useCallback(async () => {
+    const text = pasteText.trim();
+    if (!text) return;
+    try {
+      setLoading(true, "Processing text...");
+      const tokens = tokenize(text);
+      const id = await hashString(text + Date.now());
+      const title =
+        pasteTitle.trim() ||
+        `Pasted ${new Date().toLocaleString(undefined, {
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+      const book: BookEntry = {
+        id,
+        title,
+        filePath: "",
+        format: "paste",
+        addedAt: Date.now(),
+        wordIndex: 0,
+        totalWords: tokens.length,
+        lastReadAt: null,
+        pastedText: text,
+      };
+      addBook(book);
+      setShowPaste(false);
+      setPasteTitle("");
+      setPasteText("");
+      setLoading(false);
+    } catch (err) {
+      console.error("Paste failed:", err);
+      setLoading(false);
+      alert(`Failed to add text: ${err instanceof Error ? err.message : String(err)}`);
+    }
+  }, [addBook, pasteText, pasteTitle, setLoading]);
 
   const handleRemoveBook = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -105,7 +151,7 @@ export function Library() {
       {/* Header */}
       <div className="flex items-center justify-between px-6 py-4 border-b border-border">
         <div>
-          <h1 className="text-xl font-bold text-on-surface">Freedy</h1>
+          <h1 className="text-xl font-bold text-on-surface">fReedy</h1>
           <p className="text-xs text-on-surface-muted">RSVP Speed Reader</p>
         </div>
         <div className="flex items-center gap-2">
@@ -235,12 +281,24 @@ export function Library() {
 
           <button
             type="button"
+            onClick={() => setShowPaste(true)}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 bg-surface-dim text-on-surface border border-border rounded-lg hover:bg-border/50 transition-colors disabled:opacity-50 text-sm font-medium"
+            title="Paste text"
+          >
+            <ClipboardPaste className="w-4 h-4" />
+            Paste
+          </button>
+
+          <button
+            type="button"
             onClick={handleImport}
             disabled={isLoading}
             className="flex items-center gap-2 px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-soft transition-colors disabled:opacity-50 text-sm font-medium"
+            title="Import a file (EPUB, PDF, TXT, MD)"
           >
-            <Plus className="w-4 h-4" />
-            Import
+            <FileUp className="w-4 h-4" />
+            File
           </button>
         </div>
       </div>
@@ -262,15 +320,26 @@ export function Library() {
             <BookOpen className="w-16 h-16 text-on-surface-muted/30 mb-4" strokeWidth={1} />
             <p className="text-on-surface-muted text-lg mb-2">No books yet</p>
             <p className="text-on-surface-muted/60 text-sm mb-4">
-              Import an EPUB, PDF, or text file to start speed reading
+              Import an EPUB, PDF, or text file, or paste text directly
             </p>
-            <button
-              type="button"
-              onClick={handleImport}
-              className="px-6 py-2.5 bg-accent text-white rounded-lg hover:bg-accent-soft transition-colors text-sm font-medium"
-            >
-              Import your first book
-            </button>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleImport}
+                className="flex items-center gap-2 px-5 py-2.5 bg-accent text-white rounded-lg hover:bg-accent-soft transition-colors text-sm font-medium"
+              >
+                <FileUp className="w-4 h-4" />
+                Import a file
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPaste(true)}
+                className="flex items-center gap-2 px-5 py-2.5 bg-surface-dim text-on-surface border border-border rounded-lg hover:bg-border/50 transition-colors text-sm font-medium"
+              >
+                <ClipboardPaste className="w-4 h-4" />
+                Paste text
+              </button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
@@ -319,6 +388,73 @@ export function Library() {
           </div>
         )}
       </div>
+
+      {/* Paste text dialog */}
+      {showPaste && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPaste(false)}
+        >
+          <div
+            className="bg-surface border border-border rounded-xl shadow-2xl p-6 w-full max-w-2xl flex flex-col gap-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="text-base font-semibold text-on-surface">Paste text</h3>
+            <div>
+              <label htmlFor="paste-title" className="text-xs text-on-surface-muted mb-1.5 block">
+                Title (optional)
+              </label>
+              <input
+                id="paste-title"
+                type="text"
+                value={pasteTitle}
+                onChange={(e) => setPasteTitle(e.target.value)}
+                placeholder="Untitled"
+                className="w-full px-3 py-2 rounded-lg text-sm bg-surface-dim border border-border text-on-surface outline-none focus:border-accent transition-colors"
+              />
+            </div>
+            <div>
+              <label htmlFor="paste-content" className="text-xs text-on-surface-muted mb-1.5 block">
+                Content
+              </label>
+              <textarea
+                id="paste-content"
+                value={pasteText}
+                onChange={(e) => setPasteText(e.target.value)}
+                placeholder="Paste the text you want to read here…"
+                rows={12}
+                className="w-full px-3 py-2 rounded-lg text-sm bg-surface-dim border border-border text-on-surface outline-none focus:border-accent transition-colors resize-y font-mono leading-relaxed"
+              />
+              <p className="mt-1.5 text-[11px] text-on-surface-muted">
+                {pasteText.trim()
+                  ? `${pasteText.trim().split(/\s+/).length.toLocaleString()} words`
+                  : "Empty"}
+              </p>
+            </div>
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowPaste(false);
+                  setPasteTitle("");
+                  setPasteText("");
+                }}
+                className="px-4 py-2 rounded-lg text-sm text-on-surface-muted hover:bg-border/50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handlePasteSubmit}
+                disabled={!pasteText.trim() || isLoading}
+                className="px-4 py-2 rounded-lg text-sm bg-accent text-white hover:bg-accent-soft transition-colors disabled:opacity-50"
+              >
+                Add to library
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Remove confirmation dialog */}
       {confirmRemove && (
