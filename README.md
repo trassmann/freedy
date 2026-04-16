@@ -8,6 +8,19 @@ fReedy is a free, open-source desktop speed reader that uses RSVP (Rapid Serial 
 
 [Download the latest release for macOS or Windows HERE](https://github.com/trassmann/freedy/releases/latest)
 
+### macOS: first launch
+
+The app is ad-hoc signed but not notarized (notarization requires a paid Apple Developer account). On first launch, macOS will say fReedy is damaged. Strip the quarantine flag:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/Freedy.app
+```
+
+Pick the right installer for your Mac:
+
+- **Apple Silicon (M1/M2/M3/M4):** `Freedy_x.y.z_aarch64.dmg`
+- **Intel:** `Freedy_x.y.z_x64.dmg`
+
 ## Why fReedy?
 
 I wasn't satisfied with the existing RSVP reader solutions. They are either browser extensions or web apps, have horrible UIs, or aren't free. fReedy is a simple desktop app that runs completely offline, has a decent UI and is free and open source.
