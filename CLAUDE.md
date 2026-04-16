@@ -2,7 +2,7 @@
 
 ## What is this?
 
-Freedy is a desktop RSVP (Rapid Serial Visual Presentation) speed reading app. Users import books (EPUB, PDF, TXT) and read them word-by-word at configurable speeds. Built with Tauri v2 + React 19 + TypeScript.
+fReedy is a desktop RSVP (Rapid Serial Visual Presentation) speed reading app. Users import books (EPUB, PDF, TXT) and read them word-by-word at configurable speeds. Built with Tauri v2 + React 19 + TypeScript.
 
 ## Tech Stack
 

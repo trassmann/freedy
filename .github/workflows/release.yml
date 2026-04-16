@@ -83,23 +83,23 @@ jobs:
           APPLE_SIGNING_IDENTITY: ${{ matrix.platform == 'macos-latest' && '-' || '' }}
         with:
           tagName: ${{ github.ref_name }}
-          releaseName: 'Freedy ${{ github.ref_name }}'
+          releaseName: 'fReedy ${{ github.ref_name }}'
           releaseBody: |
             Download the installer for your platform below.
 
             **macOS:**
-            - Apple Silicon (M1/M2/M3/M4): `Freedy_*_aarch64.dmg`
-            - Intel: `Freedy_*_x64.dmg`
+            - Apple Silicon (M1/M2/M3/M4): `fReedy_*_aarch64.dmg`
+            - Intel: `fReedy_*_x64.dmg`
 
             On first launch macOS will say the app is damaged because it isn't notarized. Run this once to dismiss the warning:
 
             ```bash
-            xattr -dr com.apple.quarantine /Applications/Freedy.app
+            xattr -dr com.apple.quarantine /Applications/fReedy.app
             ```
 
-            **Windows:** `Freedy_*_x64-setup.exe` or `Freedy_*_x64_en-US.msi`.
+            **Windows:** `fReedy_*_x64-setup.exe` or `fReedy_*_x64_en-US.msi`.
 
-            **Linux:** `Freedy_*_amd64.AppImage` (portable), `Freedy_*_amd64.deb` (Debian/Ubuntu), or `Freedy-*-1.x86_64.rpm` (Fedora/RHEL). The AppImage needs `chmod +x` before running.
+            **Linux:** `fReedy_*_amd64.AppImage` (portable), `fReedy_*_amd64.deb` (Debian/Ubuntu), or `fReedy-*-1.x86_64.rpm` (Fedora/RHEL). The AppImage needs `chmod +x` before running.
           releaseDraft: false
           prerelease: false
           includeUpdaterJson: false

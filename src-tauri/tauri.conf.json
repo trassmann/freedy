@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/nicehash/tauri/dev/core/tauri-config-schema/schema.json",
-  "productName": "Freedy",
+  "productName": "fReedy",
   "version": "0.1.7",
   "identifier": "com.freedy.rsvp",
   "build": {
@@ -23,7 +23,7 @@
   "app": {
     "windows": [
       {
-        "title": "Freedy",
+        "title": "fReedy",
         "width": 1000,
         "height": 700,
         "minWidth": 700,

@@ -73,8 +73,9 @@ export const useAppStore = create<AppState>((set, get) => ({
   },
   removeBook: (id) => {
     const book = get().library.find((b) => b.id === id);
-    if (book && book.wordIndex > 0) {
-      // Save progress before removing
+    // Pasted entries have no stable file reference, so there's nothing
+    // sensible to key removed progress by — just drop them.
+    if (book && book.wordIndex > 0 && book.format !== "paste") {
       set((s) => ({
         library: s.library.filter((b) => b.id !== id),
         removedProgress: {
